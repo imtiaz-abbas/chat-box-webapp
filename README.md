@@ -1,18 +1,14 @@
 # chat-box-webapp
 
-getAllUsers
+### getAllUsers
 
 GET - `http://localhost:3000/users`
 
-====================
-
-getSingleUser
+### getSingleUser
 
 GET - `http://localhost:3000/users/:userId`
 
-====================
-
-signUpNewUser
+### signUpNewUser
 
 POST - `http://localhost:3000/sign_up`
 
@@ -27,9 +23,7 @@ body :
 }
 ```
 
-====================
-
-getAllMessagesBetweenTwoUsers
+### getAllMessagesBetweenTwoUsers
 
 POST - `http://localhost:3000/messages`
 
@@ -41,9 +35,7 @@ body :
 }
 ```
 
-====================
-
-sendMessageToUser
+### sendMessageToUser
 
 POST - `http://localhost:3000/send_message`
 
@@ -56,6 +48,4 @@ body :
 	"message": "How are you ?"
 }
 ```
-
-====================
 
