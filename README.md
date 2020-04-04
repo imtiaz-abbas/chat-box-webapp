@@ -16,8 +16,9 @@ signUpNewUser
 
 POST - `http://localhost:3000/sign_up`
 
-body : 
+ 
 ```
+body : 
 {
 	"id": "asdfdddd-adfdsfadf-asdfadsf-adsfd",
 	"name": "someUser",

@@ -36,6 +36,27 @@ app.get('/users/:uid', (req, res) => {
         if (rows.length > 0) {
           res.send(rows[0]);
         } else {
+          res.send({ message: `unable to find user with id ${userId}` });
+        }
+      } else {
+        res.send({ message: JSON.stringify(error) });
+      }
+    });
+  } else {
+    res.send({ message: 'userId is invalid' });
+  }
+});
+
+app.get('/user_exists/:uid', (req, res) => {
+  const userId = req.params.uid;
+  var sql = `SELECT * FROM users WHERE id = ?`;
+
+  if (userId) {
+    mysqlConnection.query(sql, [userId], (error, rows, fields) => {
+      if (!error) {
+        if (rows.length > 0) {
+          res.send({ userExists: true });
+        } else {
           res.send({ userExists: false });
         }
       } else {
