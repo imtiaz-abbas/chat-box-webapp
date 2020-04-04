@@ -7,6 +7,61 @@ GET - `http://localhost:3000/users`
 ### getSingleUser
 
 GET - `http://localhost:3000/users/:userId`
+ 
+ **Success Response:**
+```
+{
+	"id": "xxx",
+	"name": "xxx",
+	"phoneNumber": "xxx",
+	"email": "xxx"
+}
+```
+**Failure Response:**
+```
+{
+	message: "error message"
+}
+```
+
+### checkUserExists
+
+GET - `http://localhost:3000/user_exists/:userId`
+ 
+ **Success Response:**
+```
+{
+	userExists: true
+}
+```
+**Failure Response:**
+```
+{
+	userExists: false
+}
+```
+
+### userSearch
+
+GET - `http://localhost:3000/users/search/:keyword`
+
+ **Success Response:**
+```
+[
+    {
+        "id": "xxx",
+        "name": "xxx",
+        "phoneNumber": "xxx",
+        "email": "xxx"
+    },...
+]
+```
+**Failure Response:**
+```
+{
+	message: "error message"
+}
+```
 
 ### signUpNewUser
 
