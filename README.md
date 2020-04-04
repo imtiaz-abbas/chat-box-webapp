@@ -12,9 +12,8 @@ GET - `http://localhost:3000/users/:userId`
 
 POST - `http://localhost:3000/sign_up`
 
- 
+ **Request body:**
 ```
-body : 
 {
 	"id": "asdfdddd-adfdsfadf-asdfadsf-adsfd",
 	"name": "someUser",
@@ -23,11 +22,24 @@ body :
 }
 ```
 
+ **Success Response:**
+```
+{
+	message: "OK"
+}
+```
+**Failure Response:**
+```
+{
+	message: "error message"
+}
+```
+
 ### getAllMessagesBetweenTwoUsers
 
 POST - `http://localhost:3000/messages`
 
-body : 
+**Request body:**
 ```
 {
 	"friendId": "xyasdf-adfdsfadf-asdfadsf-adsfd",
@@ -39,7 +51,7 @@ body :
 
 POST - `http://localhost:3000/send_message`
 
-body : 
+**Request body:**
 ```
 {
 	"id": "seven",
