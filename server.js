@@ -69,7 +69,7 @@ app.get('/user_exists/:uid', (req, res) => {
 });
 
 app.get('/users/search/:keyword', (req, res) => {
-  const keyword = req.params.keyword ? req.params.keyword : '';
+  const keyword = req.params.keyword ? req.params.keyword.toLowerCase() : '';
   const query = `SELECT * FROM users Where name LIKE '%${keyword}%' OR phoneNumber LIKE '%${keyword}%';`;
   mysqlConnection.query(query, (err, rows, fields) => {
     if (!err) {
@@ -84,8 +84,7 @@ app.post('/sign_up', (req, res) => {
   let user = req.body;
   var sql =
     'INSERT INTO users (`id`, `name`, `phoneNumber`, `email`) VALUES (?,?,?,?);';
-
-  const name = user.name ? user.name : '';
+  const name = user.name ? user.name.toLowerCase() : '';
   const phoneNumber = user.phoneNumber ? user.phoneNumber : '';
   const email = user.email ? user.email : '';
 
