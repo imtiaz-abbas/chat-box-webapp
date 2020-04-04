@@ -135,7 +135,11 @@ app.post('/messages_count', (req, res) => {
       [userId, friendId, friendId, userId],
       (error, rows, fields) => {
         if (!error) {
-          res.send(rows);
+          if (rows.length > 0) {
+            res.send(rows[0]);
+          } else {
+            res.send({ messages_count: 0 });
+          }
         } else {
           console.log(JSON.stringify(error));
           res.send({ message: JSON.stringify(error) });
