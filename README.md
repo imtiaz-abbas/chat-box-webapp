@@ -4,13 +4,9 @@
 
 GET - `http://localhost:3000/users`
 
-====================
-
 ### getSingleUser
 
 GET - `http://localhost:3000/users/:userId`
-
-====================
 
 ### signUpNewUser
 
@@ -26,8 +22,6 @@ body :
 }
 ```
 
-====================
-
 ### getAllMessagesBetweenTwoUsers
 
 POST - `http://localhost:3000/messages`
@@ -39,8 +33,6 @@ body :
 	"userId": "asdfdddd-adfdsfadf-asdfadsf-adsfd"
 }
 ```
-
-====================
 
 ### sendMessageToUser
 
@@ -55,6 +47,4 @@ body :
 	"message": "How are you ?"
 }
 ```
-
-====================
 
