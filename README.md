@@ -1,14 +1,18 @@
 # chat-box-webapp
 
-*getAllUsers*
+getAllUsers
 
 GET - `http://localhost:3000/users`
 
 ====================
 
+getSingleUser
+
 GET - `http://localhost:3000/users/:userId`
 
 ====================
+
+signUpNewUser
 
 POST - `http://localhost:3000/sign_up`
 
@@ -24,6 +28,8 @@ body :
 
 ====================
 
+getAllMessagesBetweenTwoUsers
+
 POST - `http://localhost:3000/messages`
 
 body : 
@@ -35,6 +41,8 @@ body :
 ```
 
 ====================
+
+sendMessageToUser
 
 POST - `http://localhost:3000/send_message`
 
