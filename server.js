@@ -121,6 +121,32 @@ app.get('/users', (req, res) => {
   });
 });
 
+app.post('/messages_count', (req, res) => {
+  let requestParams = req.body;
+  var sql =
+    'SELECT count(*) as messages_count FROM messages WHERE senderId = ? AND recieverId = ? OR senderID = ? AND recieverId= ? ORDER BY timestamp DESC';
+
+  const userId = requestParams.userId;
+  const friendId = requestParams.friendId;
+
+  if (userId && friendId) {
+    mysqlConnection.query(
+      sql,
+      [userId, friendId, friendId, userId],
+      (error, rows, fields) => {
+        if (!error) {
+          res.send(rows);
+        } else {
+          console.log(JSON.stringify(error));
+          res.send({ message: JSON.stringify(error) });
+        }
+      },
+    );
+  } else {
+    res.send({ status: 'failed', message: 'userId or friendId is missing' });
+  }
+});
+
 app.post('/messages', (req, res) => {
   let requestParams = req.body;
   var sql =

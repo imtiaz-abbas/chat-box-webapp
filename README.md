@@ -102,6 +102,25 @@ POST - `http://localhost:3000/messages`
 }
 ```
 
+### getChatMessagesCount
+
+POST - `http://localhost:3000/messages_count`
+
+**Request body:**
+```
+{
+	"friendId": "xyasdf-adfdsfadf-asdfadsf-adsfd",
+	"userId": "asdfdddd-adfdsfadf-asdfadsf-adsfd"
+}
+```
+
+**Response body:**
+```
+{
+	messages_count: 20
+}
+```
+
 ### sendMessageToUser
 
 POST - `http://localhost:3000/send_message`
