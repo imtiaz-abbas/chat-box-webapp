@@ -14,6 +14,10 @@ app.listen(3000, () =>
   console.log('Exress server is running at port number 3000'),
 );
 
+app.get('/', (req, res) => {
+  res.send({ message: 'OK' });
+});
+
 app.get('/users/:uid', (req, res) => {
   const userId = req.params.uid;
   if (userId) {
