@@ -5,6 +5,28 @@ const { pool } = require('./config');
 const app = express();
 const bodyParser = require('body-parser');
 
+// var mqtt = require('mqtt');
+
+// var client = mqtt.connect('mqtt://broker.hivemq.com', { port: 1883 });
+
+// client.on('connect', function() {
+//   client.subscribe('message_imtiaz', function(err) {
+//     if (!err) {
+//       client.publish('message_imtiaz', 'Hello mqtt');
+//     }
+//   });
+// });
+
+// client.on('message', function(topic, message) {
+//   console.log('topic');
+//   console.log(topic);
+//   console.log('topic');
+//   console.log('message.toString()');
+//   console.log(message.toString());
+//   console.log('message.toString()');
+//   client.end();
+// });
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
@@ -41,7 +63,7 @@ app.get('/users/:uid', (req, res) => {
 
 app.get('/user_exists/:uid', (req, res) => {
   const userId = req.params.uid;
-  var sql = `SELECT * FROM users WHERE id = ${userId}`;
+  var sql = `SELECT * FROM users WHERE id = '${userId}'`;
 
   if (userId) {
     pool.query(sql, (error, results) => {
