@@ -1,4 +1,3 @@
-const mysql = require('mysql');
 const express = require('express');
 const cors = require('cors');
 const { pool } = require('./config');
@@ -10,9 +9,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 
-app.listen(3000, () =>
-  console.log('Exress server is running at port number 3000'),
-);
+app.listen(process.env.PORT || 3000, () => {
+  console.log(
+    `Exress server is running at port number ${process.env.PORT || 3000}`,
+  );
+});
 
 app.get('/', (req, res) => {
   res.send({ message: 'OK' });
