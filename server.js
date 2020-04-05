@@ -9,6 +9,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 
+if ('production' == app.get('env')) {
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+}
+
 app.listen(process.env.PORT || 3000, () => {
   console.log(
     `Exress server is running at port number ${process.env.PORT || 3000}`,
