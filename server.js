@@ -126,7 +126,6 @@ app.post('/messages_count', (req, res) => {
           res.send({ messages_count: 0 });
         }
       } else {
-        console.log(JSON.stringify(error));
         res.send({ message: JSON.stringify(error) });
       }
     });
@@ -145,7 +144,6 @@ app.post('/messages', (req, res) => {
   if (userId && friendId) {
     pool.query(sql, (error, results) => {
       if (!error) {
-        console.log(results.rows);
         res.send(results.rows);
       } else {
         console.log(JSON.stringify(error));
