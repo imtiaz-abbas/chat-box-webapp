@@ -1,26 +1,14 @@
 const mysql = require('mysql');
 const express = require('express');
+const cors = require('cors');
+const { pool } = require('./config');
 
 const app = express();
 const bodyParser = require('body-parser');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-
-var mysqlConnection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'chat-box',
-});
-
-mysqlConnection.connect(error => {
-  if (!error) {
-    console.log('DB CONNECTION SUCCEEDED');
-  } else {
-    console.log('DB CONNECTION FAILED \n ', JSON.stringify(error));
-  }
-});
+app.use(cors());
 
 app.listen(3000, () =>
   console.log('Exress server is running at port number 3000'),
@@ -28,18 +16,13 @@ app.listen(3000, () =>
 
 app.get('/users/:uid', (req, res) => {
   const userId = req.params.uid;
-  var sql = `SELECT * FROM users WHERE id = ?`;
-
   if (userId) {
-    mysqlConnection.query(sql, [userId], (error, rows, fields) => {
-      if (!error) {
-        if (rows.length > 0) {
-          res.send(rows[0]);
-        } else {
-          res.send({ message: `unable to find user with id ${userId}` });
-        }
-      } else {
+    var sql = `SELECT * FROM users WHERE id = '${userId}'`;
+    pool.query(sql, (error, results) => {
+      if (error) {
         res.send({ message: JSON.stringify(error) });
+      } else {
+        res.status(201).json(results.rows[0]);
       }
     });
   } else {
@@ -49,12 +32,12 @@ app.get('/users/:uid', (req, res) => {
 
 app.get('/user_exists/:uid', (req, res) => {
   const userId = req.params.uid;
-  var sql = `SELECT * FROM users WHERE id = ?`;
+  var sql = `SELECT * FROM users WHERE id = ${userId}`;
 
   if (userId) {
-    mysqlConnection.query(sql, [userId], (error, rows, fields) => {
+    pool.query(sql, (error, results) => {
       if (!error) {
-        if (rows.length > 0) {
+        if (results.rows.length > 0) {
           res.send({ userExists: true });
         } else {
           res.send({ userExists: false });
@@ -71,9 +54,9 @@ app.get('/user_exists/:uid', (req, res) => {
 app.get('/users/search/:keyword', (req, res) => {
   const keyword = req.params.keyword ? req.params.keyword.toLowerCase() : '';
   const query = `SELECT * FROM users Where name LIKE '%${keyword}%' OR phoneNumber LIKE '%${keyword}%';`;
-  mysqlConnection.query(query, (err, rows, fields) => {
+  pool.query(query, (err, results) => {
     if (!err) {
-      res.send(rows);
+      res.status(201).json(results.rows);
     } else {
       res.send({ message: JSON.stringify(err) });
     }
@@ -83,69 +66,61 @@ app.get('/users/search/:keyword', (req, res) => {
 app.post('/sign_up', (req, res) => {
   let user = req.body;
   var sql =
-    'INSERT INTO users (`id`, `name`, `phoneNumber`, `email`) VALUES (?,?,?,?);';
+    'INSERT INTO users (id, name, phoneNumber, email) VALUES ($1,$2,$3,$4)';
   const name = user.name ? user.name.toLowerCase() : '';
   const phoneNumber = user.phoneNumber ? user.phoneNumber : '';
   const email = user.email ? user.email : '';
 
   if (user.id) {
-    mysqlConnection.query(
-      sql,
-      [user.id, name, phoneNumber, email],
-      (error, rows, fields) => {
-        if (!error) {
-          console.log(rows);
-          res.send({ message: 'ok' });
-        } else {
-          console.log(JSON.stringify(error));
-          res.send({ message: JSON.stringify(error) });
-        }
-      },
-    );
+    pool.query(sql, [user.id, name, phoneNumber, email], (error, results) => {
+      if (!error) {
+        console.log(results.rows);
+        res.send({ message: 'ok' });
+      } else {
+        res.send({ message: JSON.stringify(error) });
+      }
+    });
   } else {
     res.send({ status: 'failed', message: 'id is mandatory' });
   }
 });
 
 app.get('/users', (req, res) => {
-  const query = 'SELECT * FROM users';
-  console.log('mysqlConnection query ', query);
-
-  mysqlConnection.query(query, (err, rows, fields) => {
-    if (!err) {
-      console.log(rows);
-      res.send(rows);
+  const sql = 'SELECT * FROM users';
+  pool.query(sql, (error, results) => {
+    if (error) {
+      res.send({ message: JSON.stringify(error) });
     } else {
-      console.log(err);
+      console.log('results');
+      console.log(results.rows);
+      console.log('results');
+      res.status(201).json(results.rows);
     }
   });
 });
 
 app.post('/messages_count', (req, res) => {
   let requestParams = req.body;
-  var sql =
-    'SELECT count(*) as messages_count FROM messages WHERE senderId = ? AND recieverId = ? OR senderID = ? AND recieverId= ? ORDER BY timestamp DESC';
 
   const userId = requestParams.userId;
   const friendId = requestParams.friendId;
+  var sql = `SELECT COUNT(*) AS messages_count FROM messages WHERE sender_id = '${userId}' AND reciever_id = '${friendId}' OR sender_id = '${friendId}' AND reciever_id = '${userId}'`;
+
+  console.log(sql);
 
   if (userId && friendId) {
-    mysqlConnection.query(
-      sql,
-      [userId, friendId, friendId, userId],
-      (error, rows, fields) => {
-        if (!error) {
-          if (rows.length > 0) {
-            res.send(rows[0]);
-          } else {
-            res.send({ messages_count: 0 });
-          }
+    pool.query(sql, (error, results) => {
+      if (!error) {
+        if (results.rows.length > 0) {
+          res.send(results.rows[0]);
         } else {
-          console.log(JSON.stringify(error));
-          res.send({ message: JSON.stringify(error) });
+          res.send({ messages_count: 0 });
         }
-      },
-    );
+      } else {
+        console.log(JSON.stringify(error));
+        res.send({ message: JSON.stringify(error) });
+      }
+    });
   } else {
     res.send({ status: 'failed', message: 'userId or friendId is missing' });
   }
@@ -153,26 +128,21 @@ app.post('/messages_count', (req, res) => {
 
 app.post('/messages', (req, res) => {
   let requestParams = req.body;
-  var sql =
-    'SELECT * FROM messages WHERE senderId = ? AND recieverId = ? OR senderID = ? AND recieverId= ? ORDER BY timestamp DESC';
 
   const userId = requestParams.userId;
   const friendId = requestParams.friendId;
+  var sql = `SELECT * FROM messages WHERE sender_id = '${userId}' AND reciever_id = '${friendId}' OR sender_id = '${friendId}' AND reciever_id= '${userId}' ORDER BY timestamp DESC`;
 
   if (userId && friendId) {
-    mysqlConnection.query(
-      sql,
-      [userId, friendId, friendId, userId],
-      (error, rows, fields) => {
-        if (!error) {
-          console.log(rows);
-          res.send(rows);
-        } else {
-          console.log(JSON.stringify(error));
-          res.send({ message: JSON.stringify(error) });
-        }
-      },
-    );
+    pool.query(sql, (error, results) => {
+      if (!error) {
+        console.log(results.rows);
+        res.send(results.rows);
+      } else {
+        console.log(JSON.stringify(error));
+        res.send({ message: JSON.stringify(error) });
+      }
+    });
   } else {
     res.send({ status: 'failed', message: 'userId or friendId is missing' });
   }
@@ -181,7 +151,7 @@ app.post('/messages', (req, res) => {
 app.post('/send_message', (req, res) => {
   let requestParams = req.body;
   var sql =
-    'INSERT INTO messages (`messageId`, `senderId`, `recieverId`, `text`, `timestamp`) VALUES (?,?,?,?, now());';
+    'INSERT INTO messages (message_id, sender_id, reciever_id, text, timestamp) VALUES ($1,$2,$3,$4,$5)';
 
   const messageId = requestParams.id;
   const userId = requestParams.userId;
@@ -189,12 +159,13 @@ app.post('/send_message', (req, res) => {
   const message = requestParams.message;
 
   if (messageId && userId && friendId && message) {
-    mysqlConnection.query(
+    const now = new Date();
+    pool.query(
       sql,
-      [messageId, userId, friendId, message],
-      (error, rows, fields) => {
+      [messageId, userId, friendId, message, now],
+      (error, results) => {
         if (!error) {
-          console.log(rows);
+          console.log(results.rows);
           res.send({ message: 'ok' });
         } else {
           console.log(JSON.stringify(error));
