@@ -19,7 +19,7 @@ const sendMessage = (req, res) => {
     if (messageId && userId && friendId && content && chatId && type) {
       pool.query(
         chat_sql,
-        [chatId, userId, friendId, now, type],
+        [chatId, userId, friendId, now],
         (error, results) => {
           if (!error) {
             storeMessageToDb(
@@ -53,15 +53,15 @@ const storeMessageToDb = (
   friendId,
   content,
   chatId,
-  kind,
+  type,
 ) => {
   var sql =
     'INSERT INTO messages (id, sender_id, receiver_id, content, timestamp, chat_id, kind) VALUES ($1,$2,$3,$4,$5,$6,$7)';
-  if (messageId && userId && friendId && content && chatId) {
+  if (messageId && userId && friendId && content && chatId && type) {
     const now = new Date();
     pool.query(
       sql,
-      [messageId, userId, friendId, content, now, chatId, kind],
+      [messageId, userId, friendId, content, now, chatId, type],
       (error, results) => {
         if (!error) {
           getMessageById(res, messageId);
