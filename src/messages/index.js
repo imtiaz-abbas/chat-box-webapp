@@ -6,19 +6,20 @@ const url = require('url');
 const sendMessage = (req, res) => {
   let requestParams = req.body;
   var chat_sql =
-    'INSERT INTO chats (id, primary_user_id, secondary_user_id, timestamp) VALUES ($1,$2,$3,$4)';
+    'INSERT INTO chats (id, primary_user_id, secondary_user_id, timestamp, type) VALUES ($1,$2,$3,$4,$5)';
   const messageId = requestParams.id;
   const userId = requestParams.sender_id;
   const friendId = requestParams.receiver_id;
   const content = requestParams.content;
   var chatId = requestParams.chat_id;
+  var type = requestParams.type;
   const now = new Date();
   if (!chatId) {
     chatId = uuid.v4();
-    if (messageId && userId && friendId && content && chatId) {
+    if (messageId && userId && friendId && content && chatId && type) {
       pool.query(
         chat_sql,
-        [chatId, userId, friendId, now],
+        [chatId, userId, friendId, now, type],
         (error, results) => {
           if (!error) {
             storeMessageToDb(res, messageId, userId, friendId, content, chatId);
