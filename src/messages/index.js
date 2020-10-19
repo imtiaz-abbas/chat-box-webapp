@@ -6,7 +6,7 @@ const url = require('url');
 const sendMessage = (req, res) => {
   let requestParams = req.body;
   var chat_sql =
-    'INSERT INTO chats (id, primary_user_id, secondary_user_id, timestamp, kind) VALUES ($1,$2,$3,$4,$5)';
+    'INSERT INTO chats (id, primary_user_id, secondary_user_id, timestamp) VALUES ($1,$2,$3,$4)';
   const messageId = requestParams.id;
   const userId = requestParams.sender_id;
   const friendId = requestParams.receiver_id;
@@ -22,7 +22,15 @@ const sendMessage = (req, res) => {
         [chatId, userId, friendId, now, type],
         (error, results) => {
           if (!error) {
-            storeMessageToDb(res, messageId, userId, friendId, content, chatId);
+            storeMessageToDb(
+              res,
+              messageId,
+              userId,
+              friendId,
+              content,
+              chatId,
+              type,
+            );
           } else {
             res.status(400).send({ message: JSON.stringify(error) });
           }
@@ -45,14 +53,15 @@ const storeMessageToDb = (
   friendId,
   content,
   chatId,
+  kind,
 ) => {
   var sql =
-    'INSERT INTO messages (id, sender_id, receiver_id, content, timestamp, chat_id) VALUES ($1,$2,$3,$4,$5,$6)';
+    'INSERT INTO messages (id, sender_id, receiver_id, content, timestamp, chat_id, kind) VALUES ($1,$2,$3,$4,$5,$6,$7)';
   if (messageId && userId && friendId && content && chatId) {
     const now = new Date();
     pool.query(
       sql,
-      [messageId, userId, friendId, content, now, chatId],
+      [messageId, userId, friendId, content, now, chatId, kind],
       (error, results) => {
         if (!error) {
           getMessageById(res, messageId);
