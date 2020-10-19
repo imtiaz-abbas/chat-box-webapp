@@ -24,5 +24,5 @@ CREATE TABLE messages (
     seen_at TIMESTAMP,
     replying_to VARCHAR(50) DEFAULT NULL,
     chat_id VARCHAR(100) NOT NULL,
-    type VARCHAR(20) NOT NULL
+    kind VARCHAR(20) NOT NULL
 );

@@ -6,7 +6,7 @@ const url = require('url');
 const sendMessage = (req, res) => {
   let requestParams = req.body;
   var chat_sql =
-    'INSERT INTO chats (id, primary_user_id, secondary_user_id, timestamp, type) VALUES ($1,$2,$3,$4,$5)';
+    'INSERT INTO chats (id, primary_user_id, secondary_user_id, timestamp, kind) VALUES ($1,$2,$3,$4,$5)';
   const messageId = requestParams.id;
   const userId = requestParams.sender_id;
   const friendId = requestParams.receiver_id;
@@ -24,7 +24,6 @@ const sendMessage = (req, res) => {
           if (!error) {
             storeMessageToDb(res, messageId, userId, friendId, content, chatId);
           } else {
-            console.log('========= error ', error);
             res.status(400).send({ message: JSON.stringify(error) });
           }
         },
