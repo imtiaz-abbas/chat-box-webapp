@@ -24,6 +24,7 @@ const sendMessage = (req, res) => {
           if (!error) {
             storeMessageToDb(res, messageId, userId, friendId, content, chatId);
           } else {
+            console.log('========= error ', error);
             res.status(400).send({ message: JSON.stringify(error) });
           }
         },
