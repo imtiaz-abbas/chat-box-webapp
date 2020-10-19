@@ -42,7 +42,7 @@ const sendMessage = (req, res) => {
         .send({ status: 'failed', message: 'userId or friendId is missing' });
     }
   } else {
-    storeMessageToDb(res, messageId, userId, friendId, content, chatId);
+    storeMessageToDb(res, messageId, userId, friendId, content, chatId, type);
   }
 };
 
